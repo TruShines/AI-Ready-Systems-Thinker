@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UAT & Defect Tracking | EmpowerMe Wellness</title>
+<style>
+:root {
+  --bg-primary: #1B2A4A;
+  --bg-secondary: #162240;
+  --bg-card: #213358;
+  --bg-card-hover: #2A3F6A;
+  --border: #2E4470;
+  --text-primary: #FFFFFF;
+  --text-secondary: #B0BEC5;
+  --text-muted: #7A8FA8;
+  --accent-blue: #00838F;
+  --accent-teal: #4DB6AC;
+  --accent-orange: #E8735A;
+  --accent-red: #EF5350;
+  --accent-green: #66BB6A;
+  --accent-amber: #FFA726;
+  --accent-purple: #AB47BC;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Arial','Helvetica Neue',sans-serif; background:var(--bg-primary); color:var(--text-primary); line-height:1.6; overflow-x:hidden; }
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+/* HEADER */
+.header {
+  position:sticky; top:0; z-index:100;
+  background:rgba(11,15,26,0.92); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:12px 24px; display:flex; align-items:center; justify-content:space-between;
+}
+.header-left { display:flex; align-items:center; gap:14px; }
+.logo-mark {
+  width:38px; height:38px; background:linear-gradient(135deg,#00838F,#4DB6AC);
+  border-radius:10px; display:flex; align-items:center; justify-content:center;
+  font-family:'Consolas','Courier New',monospace; font-weight:700; font-size:14px; color:var(--bg-primary);
+}
+.header-title { font-size:16px; font-weight:700; }
+.header-subtitle { font-size:10px; color:var(--text-secondary); font-family:'Consolas','Courier New',monospace; text-transform:uppercase; letter-spacing:1px; }
+.header-right { display:flex; align-items:center; gap:10px; }
+.role-select {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:6px 10px; color:var(--text-primary); font-size:11px; cursor:pointer; font-family:inherit;
+}
+.role-select option { background:var(--bg-secondary); }
+.search-box {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:6px 12px; color:var(--text-primary); font-size:12px; width:180px; font-family:inherit;
+}
+.search-box:focus { outline:none; border-color:var(--accent-blue); }
+.search-box::placeholder { color:var(--text-muted); }
+
+/* HERO METRICS */
+.hero-metrics { padding:20px 24px 12px; display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
+.metric-card {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:14px; position:relative; overflow:hidden; transition:all 0.3s; cursor:default;
+}
+.metric-card:hover { border-color:var(--accent-blue); transform:translateY(-2px); }
+.metric-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.metric-label { font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--text-secondary); font-family:'Consolas','Courier New',monospace; margin-bottom:4px; }
+.metric-value { font-size:28px; font-weight:700; letter-spacing:-1px; line-height:1; }
+.metric-sub { font-size:10px; color:var(--text-muted); margin-top:3px; }
+
+/* MAIN LAYOUT */
+.main-layout { display:flex; min-height:calc(100vh - 160px); }
+.sidebar {
+  width:240px; min-width:240px; border-right:1px solid var(--border);
+  padding:12px 0; background:var(--bg-secondary); overflow-y:auto; max-height:calc(100vh - 160px); position:sticky; top:60px;
+}
+.sidebar-label { padding:6px 16px; font-size:9px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); font-family:'Consolas','Courier New',monospace; margin-top:8px; }
+.nav-item {
+  padding:8px 16px; cursor:pointer; display:flex; align-items:center; gap:8px;
+  transition:all 0.2s; border-left:3px solid transparent; font-size:12px; color:var(--text-secondary);
+}
+.nav-item:hover { background:rgba(0,131,143,0.08); color:var(--text-primary); }
+.nav-item.active { background:rgba(0,131,143,0.12); border-left-color:var(--accent-blue); color:var(--text-primary); font-weight:600; }
+.nav-icon { font-size:13px; width:20px; text-align:center; }
+.nav-badge {
+  margin-left:auto; font-size:9px; font-family:'Consolas','Courier New',monospace; font-weight:700;
+  padding:2px 6px; border-radius:10px;
+}
+.nav-badge.red { background:rgba(239,83,80,0.15); color:var(--accent-red); }
+.nav-badge.amber { background:rgba(255,167,38,0.15); color:var(--accent-amber); }
+.nav-badge.purple { background:rgba(171,71,188,0.15); color:var(--accent-purple); }
+.nav-badge.teal { background:rgba(77,182,172,0.15); color:var(--accent-teal); }
+.nav-badge.blue { background:rgba(0,131,143,0.15); color:var(--accent-blue); }
+
+/* CONTENT */
+.content { flex:1; padding:16px 24px; overflow-y:auto; max-height:calc(100vh - 160px); }
+.content-header { margin-bottom:16px; }
+.content-title { font-size:22px; font-weight:700; letter-spacing:-0.5px; }
+.content-meta { font-size:11px; color:var(--text-secondary); margin-top:2px; }
+
+/* FILTERS */
+.filters { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.filter-select {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:5px 10px; color:var(--text-primary); font-size:11px; cursor:pointer; font-family:inherit;
+}
+.filter-select option { background:var(--bg-secondary); }
+
+/* TABLE */
+.table-container { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+.data-table { width:100%; border-collapse:collapse; font-size:11px; }
+.data-table th {
+  background:var(--bg-secondary); padding:8px 10px; text-align:left;
+  font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted);
+  font-family:'Consolas','Courier New',monospace; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:2;
+}
+.data-table td { padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.03); color:var(--text-secondary); vertical-align:middle; }
+.data-table tr { cursor:pointer; transition:background 0.15s; }
+.data-table tbody tr:hover td { background:rgba(0,131,143,0.06); }
+
+/* STATUS BADGES */
+.status-badge {
+  display:inline-block; padding:2px 8px; border-radius:4px; font-size:9px;
+  font-family:'Consolas','Courier New',monospace; font-weight:700; text-transform:uppercase; white-space:nowrap;
+}
+.status-badge.not-started { background:rgba(255,255,255,0.06); color:var(--text-muted); }
+.status-badge.in-progress { background:rgba(0,131,143,0.2); color:var(--accent-blue); }
+.status-badge.pass { background:rgba(102,187,106,0.2); color:var(--accent-green); }
+.status-badge.fail { background:rgba(239,83,80,0.2); color:var(--accent-red); }
+.status-badge.blocked { background:rgba(255,167,38,0.2); color:var(--accent-amber); }
+.status-badge.retest { background:rgba(0,131,143,0.2); color:var(--accent-teal); }
+.status-badge.pending-approval { background:rgba(171,71,188,0.2); color:var(--accent-purple); }
+.status-badge.closed { background:rgba(102,187,106,0.15); color:var(--accent-green); }
+.status-badge.rejected { background:rgba(232,115,90,0.2); color:var(--accent-orange); }
+
+.priority-badge {
+  display:inline-block; padding:1px 6px; border-radius:3px; font-size:9px;
+  font-family:'Consolas','Courier New',monospace; font-weight:700;
+}
+.priority-badge.P0 { background:rgba(239,83,80,0.2); color:var(--accent-red); }
+.priority-badge.P1 { background:rgba(255,167,38,0.2); color:var(--accent-amber); }
+.priority-badge.P2 { background:rgba(0,131,143,0.2); color:var(--accent-blue); }
+
+.severity-badge {
+  display:inline-block; padding:1px 6px; border-radius:3px; font-size:9px;
+  font-family:'Consolas','Courier New',monospace; font-weight:700;
+}
+.severity-badge.Critical { background:rgba(239,83,80,0.25); color:var(--accent-red); }
+.severity-badge.High { background:rgba(232,115,90,0.2); color:var(--accent-orange); }
+.severity-badge.Medium { background:rgba(255,167,38,0.2); color:var(--accent-amber); }
+.severity-badge.Low { background:rgba(0,131,143,0.2); color:var(--accent-blue); }
+
+/* DETAIL PANEL */
+.overlay {
+  position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5);
+  z-index:150; opacity:0; pointer-events:none; transition:opacity 0.3s;
+}
+.overlay.visible { opacity:1; pointer-events:all; }
+.detail-panel {
+  position:fixed; top:0; right:0; width:520px; height:100vh;
+  background:var(--bg-secondary); border-left:1px solid var(--border);
+  box-shadow:-8px 0 40px rgba(0,0,0,0.5); z-index:200;
+  transform:translateX(100%); transition:transform 0.3s ease; overflow-y:auto; padding:20px;
+}
+.detail-panel.open { transform:translateX(0); }
+.detail-close {
+  position:absolute; top:14px; right:14px; width:30px; height:30px;
+  border:1px solid var(--border); border-radius:8px; background:var(--bg-card);
+  color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px;
+}
+.detail-close:hover { border-color:var(--accent-orange); color:var(--accent-orange); }
+.detail-title { font-size:16px; font-weight:700; padding-right:40px; margin-bottom:4px; }
+.detail-subtitle { font-size:10px; font-family:'Consolas','Courier New',monospace; color:var(--accent-teal); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; }
+.detail-section { margin-bottom:16px; }
+.detail-section-title {
+  font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted);
+  font-family:'Consolas','Courier New',monospace; margin-bottom:6px; padding-bottom:4px; border-bottom:1px solid var(--border);
+}
+.detail-field { margin-bottom:8px; font-size:12px; color:var(--text-secondary); line-height:1.5; }
+.detail-field strong { color:var(--text-primary); font-size:11px; display:block; margin-bottom:2px; }
+.detail-card {
+  background:var(--bg-card); border-radius:var(--radius-sm); padding:10px 12px;
+  margin-bottom:6px; border-left:3px solid var(--border); font-size:11px; line-height:1.5; color:var(--text-secondary);
+}
+
+/* ACTION BUTTONS */
+.btn {
+  padding:6px 14px; border:none; border-radius:var(--radius-sm); font-size:11px;
+  font-weight:600; cursor:pointer; transition:all 0.2s; font-family:inherit;
+}
+.btn-primary { background:var(--accent-blue); color:white; }
+.btn-primary:hover { background:#009BA6; }
+.btn-danger { background:var(--accent-red); color:white; }
+.btn-danger:hover { background:#E53935; }
+.btn-success { background:var(--accent-green); color:white; }
+.btn-success:hover { background:#57A85E; }
+.btn-warn { background:var(--accent-amber); color:var(--bg-primary); }
+.btn-ghost { background:transparent; border:1px solid var(--border); color:var(--text-secondary); }
+.btn-ghost:hover { border-color:var(--accent-blue); color:var(--text-primary); }
+.btn-sm { padding:4px 10px; font-size:10px; }
+
+.action-row { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+
+/* MODAL */
+.modal-overlay {
+  position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6);
+  z-index:300; display:none; align-items:center; justify-content:center;
+}
+.modal-overlay.show { display:flex; }
+.modal {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:24px; width:420px; max-width:90vw; max-height:80vh; overflow-y:auto;
+}
+.modal h3 { font-size:16px; margin-bottom:12px; }
+.modal label { display:block; font-size:11px; color:var(--text-secondary); margin-bottom:4px; margin-top:10px; }
+.modal input, .modal select, .modal textarea {
+  width:100%; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:7px 10px; color:var(--text-primary); font-size:12px; font-family:inherit;
+}
+.modal textarea { min-height:60px; resize:vertical; }
+.modal input:focus, .modal select:focus, .modal textarea:focus { outline:none; border-color:var(--accent-blue); }
+
+/* APPROVAL QUEUE CARD */
+.approval-card {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:14px; margin-bottom:10px; transition:all 0.2s;
+}
+.approval-card:hover { border-color:var(--accent-purple); }
+.approval-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.approval-card-title { font-size:13px; font-weight:700; }
+.approval-card-meta { font-size:10px; color:var(--text-muted); font-family:'Consolas','Courier New',monospace; }
+.approval-card-body { font-size:11px; color:var(--text-secondary); margin-bottom:10px; }
+
+/* EMPTY STATE */
+.empty-state { text-align:center; padding:60px 20px; color:var(--text-muted); }
+.empty-state .icon { font-size:36px; margin-bottom:12px; }
+.empty-state .msg { font-size:14px; }
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:24px; right:24px; background:var(--bg-card); border:1px solid var(--accent-green);
+  border-radius:var(--radius-sm); padding:10px 18px; color:var(--accent-green); font-size:12px;
+  z-index:400; transform:translateY(100px); opacity:0; transition:all 0.3s;
+}
+.toast.show { transform:translateY(0); opacity:1; }
+
+@media (max-width:1200px) { .hero-metrics { grid-template-columns:repeat(3,1fr); } }
+@media (max-width:900px) { .hero-metrics { grid-template-columns:repeat(2,1fr); } .sidebar { display:none; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo-mark">UT</div>
+    <div>
+      <div class="header-title">UAT & Defect Tracking</div>
+      <div class="header-subtitle">EmpowerMe Wellness &middot; Consent Workflow & RCM</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <input type="text" class="search-box" placeholder="Search test cases..." id="globalSearch" oninput="applyFilters()">
+    <select class="role-select" id="roleSelect" onchange="switchRole()">
+      <option value="tester">Tester / SME</option>
+      <option value="lead">Test Lead (Elyse / Katy)</option>
+      <option value="stakeholder">Stakeholder (Teresa / Julia)</option>
+    </select>
+  </div>
+</div>
+
+<div class="hero-metrics" id="heroMetrics"></div>
+
+<div class="main-layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="content" id="mainContent"></main>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeDetail()"></div>
+<div class="detail-panel" id="detailPanel">
+  <button class="detail-close" onclick="closeDetail()">&times;</button>
+  <div id="detailContent"></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA: All 47 Test Cases with BRD Requirement Details
+// ============================================================
+const TEST_CASES = [
+  // INTAKE (7)
+  {id:'TC-INT-01-001',reqId:'FR-INT-01',title:'Phone Number Validation',flow:'Intake',priority:'P0',
+   description:'System shall validate phone number format and reject placeholder values (e.g., 000-000-0000, 999-999-9999)',
+   systemAction:'Required field enforced; phone format validated; placeholder patterns blocked',
+   acceptance:'Invalid phone formats rejected 100%; placeholder patterns blocked',
+   tag:'ENHANCED',source:'RCA Group A / D12',
+   testType:'Functional — Input Validation',phase:'QA + UAT',
+   precondition:'New patient referral in Crosby 360 queue; Admissions Coordinator role',
+   testData:'Valid: (555) 867-5309, 202-555-0173\nPlaceholder: 000-000-0000, 999-999-9999\nInvalid: 55-1234, abc',
+   steps:'1. Leave phone blank → Save\n2. Enter 000-000-0000 → Save\n3. Enter 999-999-9999 → Save\n4. Enter 55-1234 → Save\n5. Enter valid phone → Save\n6. Verify stored correctly',
+   expected:'Steps 1–4: BLOCKED with specific error\nStep 5: ACCEPTED\nStep 6: Stored correctly',
+   passFail:'PASS: All invalid/placeholder rejected 100%; valid accepted\nFAIL: Any invalid accepted OR valid rejected',
+   notes:'Test with 20+ known invalid patterns per BRD Section 9',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-INT-02-001',reqId:'FR-INT-02',title:'Email Address Validation',flow:'Intake',priority:'P0',
+   description:'System shall validate email address format and domain deliverability before record creation',
+   systemAction:'Email format validated; domain deliverability checked; invalid blocked',
+   acceptance:'Invalid formats and undeliverable domains rejected at point of entry',
+   tag:'ENHANCED',source:'RCA Group A / D13',
+   testType:'Functional — Input Validation',phase:'QA + UAT',
+   precondition:'New patient referral; Admissions Coordinator role',
+   testData:'Valid: patient@gmail.com\nInvalid format: patient@, @gmail.com\nInvalid domain: patient@fakedomainxyz.com',
+   steps:'1. Leave email blank → Save\n2. Enter patient@ → Save\n3. Enter @gmail.com → Save\n4. Enter patient@fakedomainxyz.com → Save\n5. Enter valid email → Save',
+   expected:'Steps 1–4: BLOCKED\nStep 5: ACCEPTED',
+   passFail:'PASS: All invalid rejected; valid accepted\nFAIL: Any invalid accepted',
+   notes:'Domain deliverability check may need network access',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-INT-03-001',reqId:'FR-INT-03',title:'Physical Address USPS Validation',flow:'Intake',priority:'P1',
+   description:'System shall validate physical address against USPS database and flag non-deliverable addresses',
+   systemAction:'Address validated against USPS; non-deliverable flagged',
+   acceptance:'Non-deliverable addresses flagged before downstream workflow',
+   tag:'ENHANCED',source:'RCA Group A / D14',
+   testType:'Functional — Validation + Integration',phase:'QA + UAT',
+   precondition:'New patient referral; USPS validation service accessible',
+   testData:'Valid: 1600 Pennsylvania Ave NW, Washington DC 20500\nInvalid: 123 Fake St, Nowhere XX 00000',
+   steps:'1. Leave address blank → Save\n2. Enter invalid address → Save\n3. Enter partial address → Save\n4. Enter valid address → Save',
+   expected:'Step 1: BLOCKED\nStep 2: FLAGGED\nStep 3: BLOCKED\nStep 4: ACCEPTED',
+   passFail:'PASS: Invalid flagged; valid verified\nFAIL: Non-deliverable accepted without flag',
+   notes:'USPS API connectivity required',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-INT-04-001',reqId:'FR-INT-04',title:'POA Status Mandatory Capture',flow:'Intake',priority:'P0',
+   description:'System shall capture POA status (yes/no/unknown) and POA contact information as mandatory fields at intake',
+   systemAction:'POA mandatory; when Yes, contact info required; no bypass',
+   acceptance:'POA cannot be blank; POA contact required when POA = yes',
+   tag:'NEW',source:'RCA Group B / D15',
+   testType:'Functional — Required Field + Conditional Logic',phase:'QA + UAT',
+   precondition:'New patient referral; Admissions Coordinator role',
+   testData:'POA values: Yes, No, Unknown\nPOA contact: name, phone, email, relationship',
+   steps:'1. Leave POA blank → Save\n2. POA = Yes, leave contact blank → Save\n3. POA = Yes + full contact → Save\n4. POA = No → Save\n5. POA = Unknown → Save',
+   expected:'Step 1: BLOCKED\nStep 2: BLOCKED\nStep 3: ACCEPTED\nSteps 4-5: ACCEPTED',
+   passFail:'PASS: POA cannot be skipped; contact required when Yes\nFAIL: POA blank accepted OR contact skippable',
+   notes:'Primary constraint per Theory of Constraints analysis',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-INT-05-001',reqId:'FR-INT-05',title:'Incomplete Data Blocks Downstream',flow:'Intake',priority:'P0',
+   description:'System shall flag records with incomplete or invalid data and prevent downstream workflow progression',
+   systemAction:'Validation gate blocks progression; resolution required before consent',
+   acceptance:'No record with data quality failures proceeds to consent workflow',
+   tag:'ENHANCED',source:'RCA Group A',
+   testType:'Functional — Workflow Gate',phase:'QA + UAT',
+   precondition:'Records with intentional data gaps from TC-INT-01 through TC-INT-04',
+   testData:'Record with invalid phone\nRecord with missing POA\nRecord with flagged address\nComplete valid record',
+   steps:'1. Record with invalid phone → Trigger consent\n2. Record with missing POA → Trigger consent\n3. Flagged address → Trigger consent\n4. Verify specific issue identified\n5. Resolve and retry',
+   expected:'Steps 1–3: BLOCKED\nStep 4: Issue identified\nStep 5: PASS after resolution',
+   passFail:'PASS: All incomplete blocked; resolution enables progression\nFAIL: Incomplete record advances',
+   notes:'Enforcement mechanism for FR-INT-01 through FR-INT-04',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-INT-06-001',reqId:'FR-INT-06',title:'RP and FRP Independence',flow:'Intake',priority:'P1',
+   description:'System shall capture Responsible Party (RP) and Financially Responsible Party (FRP) as distinct fields',
+   systemAction:'RP and FRP separate; independently validated; can be same or different person',
+   acceptance:'RP and FRP stored as distinct entities with independent validation',
+   tag:'ENHANCED',source:'RCM Map',
+   testType:'Functional — Data Architecture',phase:'QA + UAT',
+   precondition:'Patient intake form; test data for same/different RP and FRP',
+   testData:'Same person as RP and FRP\nDifferent RP and FRP\nRP only\nFRP only',
+   steps:'1. Enter same person as both → Save\n2. Verify stored independently\n3. Enter different RP and FRP → Save\n4. Verify each validated independently\n5. RP only → Save\n6. FRP only → Save',
+   expected:'Steps 1–2: Same person stored independently\nSteps 3–4: Different persons validated\nSteps 5–6: Per business rules',
+   passFail:'PASS: RP and FRP operate independently\nFAIL: Fields linked/coupled',
+   notes:'Verify downstream billing references correct FRP',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-INT-07-001',reqId:'FR-INT-07',title:'Auto-Populate Consent Type',flow:'Intake',priority:'P0',
+   description:'System shall auto-populate consent workflow type (standard vs. POA-required) based on intake data',
+   systemAction:'Consent type auto-determined from POA status; no manual selection',
+   acceptance:'Correct workflow type auto-assigned for standard and POA-required cases',
+   tag:'NEW',source:'RCA Group B',
+   testType:'Functional — Automation',phase:'QA + UAT',
+   precondition:'Patient records with varying POA statuses (from TC-INT-04)',
+   testData:'POA = No → Standard\nPOA = Yes → POA-Required\nPOA = Unknown → per business rules',
+   steps:'1. POA = No → Verify consent type = Standard\n2. POA = Yes → Verify type = POA-Required\n3. POA = Unknown → Verify per rules\n4. Change POA mid-workflow → Verify update\n5. Verify visible to Consent Specialist',
+   expected:'Steps 1–3: Correct type auto-assigned\nStep 4: Dynamic update\nStep 5: Visible',
+   passFail:'PASS: Correct type for all POA states; dynamic update\nFAIL: Wrong type OR manual selection required',
+   notes:'Feeds FR-CON-03 (POA routing)',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+
+  // 360 INTAKE (3)
+  {id:'TC-360-01-001',reqId:'FR-360-01',title:'MSPQ Form Routing',flow:'360 Intake',priority:'P0',
+   description:'System shall present MSPQ short form for all Medicare patients and trigger long form when ESRD indicated',
+   systemAction:'Short form default for Medicare; long form triggered by ESRD',
+   acceptance:'Correct MSPQ form presented based on Medicare/ESRD status',
+   tag:'ENHANCED',source:'Consent Framework',
+   testType:'Functional — Conditional Routing',phase:'QA + UAT',
+   precondition:'Patient records with Medicare payer classification; ESRD data',
+   testData:'Medicare no ESRD → short form\nMedicare + ESRD → long form\nNon-Medicare → no MSPQ',
+   steps:'1. Medicare (no ESRD) → Verify short form\n2. Medicare (ESRD) → Verify long form\n3. Non-Medicare → Verify MSPQ skipped\n4. Verify responses captured',
+   expected:'Step 1: Short form\nStep 2: Long form\nStep 3: Skipped\nStep 4: Captured',
+   passFail:'PASS: Correct form for all combos\nFAIL: Wrong form OR shown for non-Medicare',
+   notes:'Maps to Consent Framework Section 4',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-360-02-001',reqId:'FR-360-02',title:'Service Classification Routing',flow:'360 Intake',priority:'P0',
+   description:'System shall determine service classification (therapy vs. wellness) and route to appropriate consent',
+   systemAction:'Classification auto-determined; routes consent and billing',
+   acceptance:'[PENDING] — Depends on PFT reclassification',
+   tag:'PENDING',source:'Carnegie Washingtonian PFT',
+   testType:'Functional — Classification',phase:'QA + UAT',
+   precondition:'Therapy and wellness referrals; Carnegie PFT patient',
+   testData:'[SYNTHETIC] Therapy: PT referral, 3x/week\n[SYNTHETIC] Wellness: general program\n[SYNTHETIC] PFT: Carnegie',
+   steps:'1. Therapy referral → Verify classification\n2. Verify therapy → RCM billing\n3. Wellness referral → Verify classification\n4. Verify wellness routing\n5. Carnegie PFT → [PENDING]',
+   expected:'Steps 1–2: Therapy correct\nSteps 3–4: Wellness correct\nStep 5: PENDING PFT',
+   passFail:'PASS: Classification determines correct billing and consent\nFAIL: Wrong classification',
+   notes:'[SYNTHETIC] Refine after PFT decision. Open Item #1',
+   dataStatus:'Pending',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-360-03-001',reqId:'FR-360-03',title:'Frequency Against Crosby Constraints',flow:'360 Intake',priority:'P1',
+   description:'System shall capture therapy frequency and duration and validate against Crosby scheduling constraints',
+   systemAction:'Frequency validated against Crosby constraints; mismatches flagged',
+   acceptance:'[PENDING] — Crosby constraint validation pending PFT',
+   tag:'PENDING',source:'Carnegie Washingtonian',
+   testType:'Functional — Validation',phase:'QA + UAT',
+   precondition:'Crosby scheduling constraints configured',
+   testData:'[SYNTHETIC] Standard: 3x/week (valid)\n[SYNTHETIC] Carnegie .25/week vs 1x/month\n[SYNTHETIC] Below/above range',
+   steps:'1. Standard frequency (3x/week) → Validate\n2. Carnegie .25/week → Check\n3. Carnegie 1x/month → Check\n4. Below range → Validate\n5. Above range → Validate',
+   expected:'Step 1: ACCEPTED\nSteps 2–3: [PENDING]\nSteps 4–5: FLAGGED',
+   passFail:'PASS: Valid accepted; invalid flagged\nFAIL: Invalid accepted without flag',
+   notes:'[SYNTHETIC] Refine after PFT decision and Crosby review',
+   dataStatus:'Pending',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+
+  // NEW CONSENT (10)
+  {id:'TC-CON-01-001',reqId:'FR-CON-01',title:'Dynamic Consent Assembly',flow:'New Consent',priority:'P0',
+   description:'System shall assemble consent package dynamically from CORE (14), TOGGLE (6), and CONDITIONAL (2) blocks',
+   systemAction:'Parameterized block assembly; registry drives TOGGLE; payer drives CONDITIONAL',
+   acceptance:'Correct blocks for 3+ community/payer combinations',
+   tag:'NEW',source:'CR-01 / Framework',
+   testType:'Functional — Framework Assembly',phase:'QA + UAT',
+   precondition:'Community Registry populated for Zipper + 2 variations; payer data available',
+   testData:'Zipper: 14 CORE only\nCommunity + 2 TOGGLEs ON: 16 blocks\nTOGGLE BYPASS: excluded\nMedicare: CONDITIONAL included',
+   steps:'1. Zipper baseline → Verify 14 CORE\n2. Community + 2 TOGGLEs → Verify 16 blocks\n3. TOGGLE BYPASS → Verify excluded\n4. Medicare → CONDITIONAL included\n5. Verify block order matches spec',
+   expected:'Step 1: 14 CORE\nStep 2: 14 + 2 TOGGLE\nStep 3: BYPASS excluded\nStep 4: CONDITIONAL included',
+   passFail:'PASS: Correct blocks per scenario\nFAIL: Wrong blocks OR timeout',
+   notes:'Foundation of composite framework. Test 3+ combos.',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-CON-02-001',reqId:'FR-CON-02',title:'E-Signature Dual Path',flow:'New Consent',priority:'P0',
+   description:'System shall support electronic signature via Alinea Client Mode for in-person and Email Open Forms for remote',
+   systemAction:'Two paths: Client Mode (in-person) and Email Open Forms (remote)',
+   acceptance:'Both methods produce valid stored e-signatures',
+   tag:'ENHANCED',source:'CR-02 / Process Map',
+   testType:'Functional — E-Signature',phase:'QA + UAT',
+   precondition:'Consent package assembled; Client Mode and Email Open Forms configured',
+   testData:'In-person patient with device\nRemote patient/POA with valid email',
+   steps:'1. Client Mode → Patient signs in-person\n2. Verify signature stored in Alinea\n3. Email Open Forms → Send remote\n4. Verify email delivered\n5. Remote signs → Verify captured\n6. Verify timestamps',
+   expected:'Steps 1–2: Client Mode captured\nSteps 3–4: Email delivered\nSteps 5–6: Remote captured with timestamp',
+   passFail:'PASS: Both paths capture, store, timestamp\nFAIL: Not captured OR not stored',
+   notes:'Verify ESIGN compliance (NFR-SEC-03)',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-CON-03-001',reqId:'FR-CON-03',title:'POA Auto-Routing',flow:'New Consent',priority:'P0',
+   description:'System shall route consent to POA when patient is not legal signatory, with POA-specific instructions',
+   systemAction:'Auto-routes to POA based on intake data; POA instructions; tracking',
+   acceptance:'POA routing activates automatically based on intake POA status',
+   tag:'NEW',source:'CR-03 / RCA Group B',
+   testType:'Functional — Routing',phase:'QA + UAT',
+   precondition:'POA-required patient created (TC-INT-04); POA contact on file',
+   testData:'POA-required with full contact\nStandard patient (POA = No)',
+   steps:'1. POA-required → Trigger consent\n2. Verify routes to POA (not patient)\n3. Verify POA-specific instructions\n4. Verify tracking badge\n5. Standard → Verify direct to patient',
+   expected:'Steps 1–4: POA routing correct\nStep 5: Direct to patient',
+   passFail:'PASS: POA routes to POA; standard to patient\nFAIL: Wrong recipient',
+   notes:'Addresses POA-not-present chokepoint',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-CON-04-001',reqId:'FR-CON-04',title:'Block-Level Status Tracking',flow:'New Consent',priority:'P0',
+   description:'System shall track consent status per block with visual indicators: Blue = pending, Green = complete',
+   systemAction:'Block-level tracking; Blue/Green indicators; Forms Badge reflects overall',
+   acceptance:'Individual block status visible and accurate',
+   tag:'NEW',source:'CR-04 / Process Map',
+   testType:'Functional — Status Tracking',phase:'QA + UAT',
+   precondition:'Multi-block consent package assembled (TC-CON-01)',
+   testData:'16-block package\nPartial completion\nFull completion',
+   steps:'1. Trigger 16 blocks → All Blue\n2. Complete 5 of 16\n3. Verify 5 Green, 11 Blue\n4. Complete remaining\n5. Verify all Green\n6. Verify Forms Badge accurate',
+   expected:'Step 1: All Blue\nStep 3: Mixed correct\nStep 5: All Green\nStep 6: Badge accurate',
+   passFail:'PASS: Block-level accurate; Badge reflects reality\nFAIL: Not per-block OR wrong colors',
+   notes:'Critical for dashboard (NFR-USA-01)',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-CON-05-001',reqId:'FR-CON-05',title:'Registry TOGGLE State Control',flow:'New Consent',priority:'P0',
+   description:'Community Registry shall control TOGGLE block activation with ON/OFF/BYPASS/REVIEW states per community',
+   systemAction:'Registry single source of truth; 4 states; changes reflected immediately',
+   acceptance:'TOGGLE states correctly control block inclusion/exclusion',
+   tag:'NEW',source:'CR-10 / Registry',
+   testType:'Functional — Configuration',phase:'QA + UAT',
+   precondition:'Registry accessible; 2+ communities configured',
+   testData:'Community A: TOGGLE-1 ON, TOGGLE-2 OFF\nCommunity B: TOGGLE-1 BYPASS, TOGGLE-2 REVIEW\nState change: ON → OFF',
+   steps:'1. Community A → TOGGLE-1 included, TOGGLE-2 excluded\n2. Community B → TOGGLE-1 bypassed, TOGGLE-2 in review\n3. Change ON → OFF\n4. Verify change reflected\n5. Verify registry is single source',
+   expected:'Step 1: ON included, OFF excluded\nStep 2: BYPASS skipped, REVIEW flagged\nStep 4: Change reflected',
+   passFail:'PASS: All 4 states work; changes reflected\nFAIL: Wrong state behavior',
+   notes:'Carnegie row stays RED until PFT decision',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-CON-06-001',reqId:'FR-CON-06',title:'Auto-Remove on CD Acknowledgement',flow:'New Consent',priority:'P1',
+   description:'System shall automatically remove patient from pending therapist bucket upon CD acknowledgement',
+   systemAction:'CD acknowledgement triggers auto-removal; no manual step',
+   acceptance:'Patient removed immediately upon CD acknowledgement',
+   tag:'ENHANCED',source:'D22 / Elyse Sallman',
+   testType:'Functional — Automation',phase:'QA + UAT',
+   precondition:'Patient in pending bucket; CD has acknowledge access',
+   testData:'Patient pending CD acknowledgement',
+   steps:'1. Verify patient in pending bucket\n2. CD acknowledges\n3. Verify auto-removed\n4. Verify no manual step required\n5. Verify audit trail',
+   expected:'Step 1: Visible\nSteps 2–3: Auto-removal\nStep 4: No manual step\nStep 5: Audit trail',
+   passFail:'PASS: Auto-removal; no manual step; audit trail\nFAIL: Manual step OR remains in bucket',
+   notes:'Source: Elyse Sallman correction',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-CON-07-001',reqId:'FR-CON-07',title:'SOC Hard-Stop',flow:'New Consent',priority:'P0',
+   description:'System shall enforce consent completion prior to SOC date with hard-stop or escalation notification',
+   systemAction:'SOC blocked when incomplete; notifications to Consent Specialist and CD',
+   acceptance:'SOC blocked when incomplete; notification sent',
+   tag:'NEW',source:'RCA Group E',
+   testType:'Functional — Workflow Gate',phase:'QA + UAT',
+   precondition:'Patient with in-progress consent; SOC approaching',
+   testData:'Complete consent (all Green)\nIncomplete consent (blocks Blue)\nEscalated consent',
+   steps:'1. SOC with incomplete consent → Verify blocked\n2. Verify Consent Specialist notified\n3. Verify CD notified\n4. Complete consent → Verify gate cleared\n5. SOC with complete → Verify no false block',
+   expected:'Step 1: BLOCKED\nSteps 2–3: Notifications sent\nSteps 4–5: Gate cleared',
+   passFail:'PASS: Blocked when incomplete; proceeds when complete\nFAIL: SOC with incomplete OR false block',
+   notes:'Critical quality gate',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-CON-08-001',reqId:'FR-CON-08',title:'GFE Generation and Presentation',flow:'New Consent',priority:'P1',
+   description:'System shall generate GFE and present to patient/POA as part of consent package where required',
+   systemAction:'GFE auto-generated; presented in consent; signature captured',
+   acceptance:'GFE included where required; patient/POA acknowledges',
+   tag:'ENHANCED',source:'Consent Framework Sec 2',
+   testType:'Functional — Document Gen',phase:'QA + UAT',
+   precondition:'Patient with GFE-required service/payer',
+   testData:'GFE-required patient (Zipper FAA)\nNon-GFE patient\nGFE with multiple service lines',
+   steps:'1. GFE-required → Verify GFE block in package\n2. Verify amounts reflect service/payer\n3. Capture acknowledgement\n4. Non-GFE → Verify excluded\n5. Verify stored with consent',
+   expected:'Steps 1–3: GFE present, accurate, signed\nStep 4: Correctly excluded\nStep 5: Stored',
+   passFail:'PASS: Included/excluded correctly; data accurate; signed\nFAIL: Missing when required OR wrong amounts',
+   notes:'Zipper-specific FAA eligibility',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-CON-09-001',reqId:'FR-CON-09',title:'MSPQ in Consent',flow:'New Consent',priority:'P0',
+   description:'System shall capture MSPQ responses and route appropriately within consent flow',
+   systemAction:'MSPQ in consent flow; routing per FR-360-01; stored with consent',
+   acceptance:'Responses captured and routed within consent',
+   tag:'ENHANCED',source:'Consent Framework Sec 4',
+   testType:'Functional — Data Capture',phase:'QA + UAT',
+   precondition:'Medicare patient with consent package; MSPQ form per FR-360-01',
+   testData:'Medicare short form\nMedicare ESRD long form',
+   steps:'1. Medicare consent → Short form present\n2. Complete short form\n3. ESRD consent → Long form present\n4. Complete long form\n5. Verify data stored',
+   expected:'Steps 1–2: Short form works\nSteps 3–4: Long form works\nStep 5: Data stored',
+   passFail:'PASS: Correct form; responses captured\nFAIL: Wrong form OR responses lost',
+   notes:'Builds on FR-360-01',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-CON-10-001',reqId:'FR-CON-10',title:'HIPAA/Privacy Block',flow:'New Consent',priority:'P0',
+   description:'System shall present HIPAA/Privacy consent blocks per composite framework Section 5 specifications',
+   systemAction:'HIPAA blocks in all packages; signature required; per framework',
+   acceptance:'HIPAA present in every package; correct version',
+   tag:'CORE',source:'Consent Framework Sec 5',
+   testType:'Functional — Compliance',phase:'QA + UAT',
+   precondition:'Any consent package assembled',
+   testData:'Any patient (HIPAA is CORE)\nMultiple communities (same HIPAA)',
+   steps:'1. Any patient → HIPAA present\n2. Verify content matches Section 5\n3. Test 3 communities → Identical HIPAA\n4. Capture signature\n5. Verify cannot skip',
+   expected:'Steps 1–3: HIPAA present and consistent\nStep 4: Signature captured\nStep 5: Cannot skip',
+   passFail:'PASS: Present in all; content correct; required\nFAIL: Missing OR wrong content OR skippable',
+   notes:'Mandatory — no exceptions',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+
+  // FOLLOW-UP CONSENT (5)
+  {id:'TC-FUC-01-001',reqId:'FR-FUC-01',title:'Retry Threshold and Escalation',flow:'Follow-Up Consent',priority:'P0',
+   description:'System shall define maximum retry attempts per consent type with configurable thresholds (default: 3)',
+   systemAction:'Configurable max (default 3); auto-escalation',
+   acceptance:'Escalation triggers after configured count; ADO notified',
+   tag:'NEW',source:'CR-07 / RCA Group E',
+   testType:'Functional — Threshold',phase:'QA + UAT',
+   precondition:'Patient with incomplete consent; ADO notification configured',
+   testData:'3-attempt threshold\nAttempts 1, 2, 3\nThreshold change to 5',
+   steps:'1. Log attempt 1 → Counter = 1\n2. Log attempt 2 → Counter = 2\n3. Log attempt 3 → Escalation triggered\n4. Verify ADO notified\n5. Verify package complete\n6. Change threshold to 5 → Verify',
+   expected:'Steps 1–2: Counter tracks\nStep 3: Escalation fires\nSteps 4–5: ADO gets full package\nStep 6: Configurable',
+   passFail:'PASS: Counter tracks; escalation at threshold; configurable\nFAIL: Counter wrong OR no escalation',
+   notes:'Directly addresses RCA Group E',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-FUC-02-001',reqId:'FR-FUC-02',title:'ADO Escalation Completeness',flow:'Follow-Up Consent',priority:'P0',
+   description:'System shall escalate to ADO after retry threshold exceeded, with full attempt history and reason codes',
+   systemAction:'Full escalation package: patient ID, consent type, timestamps, channels, outcomes, reason codes',
+   acceptance:'ADO receives complete package with all history',
+   tag:'NEW',source:'CR-08 / RCA Group E',
+   testType:'Functional — Notification',phase:'QA + UAT',
+   precondition:'TC-FUC-01 escalation triggered; ADO active',
+   testData:'Escalated case with 3 documented attempts\nEach attempt: different channel and reason',
+   steps:'1. Trigger escalation\n2. Verify ADO notified\n3. Verify patient ID present\n4. Verify consent type present\n5. Verify timestamps\n6. Verify channels logged\n7. Verify reason codes\n8. Verify actionable',
+   expected:'Step 2: ADO notified\nSteps 3–7: All data present\nStep 8: Actionable',
+   passFail:'PASS: Complete package; ADO notified\nFAIL: Missing data OR not notified',
+   notes:'Builds on TC-FUC-01',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-FUC-03-001',reqId:'FR-FUC-03',title:'Expiration and Renewal Trigger',flow:'Follow-Up Consent',priority:'P1',
+   description:'System shall track consent expiration dates and trigger renewal at configurable lead time (default: 30 days)',
+   systemAction:'Expiration tracked per block; renewal at lead time; configurable',
+   acceptance:'Renewal triggers at configured lead time; correct blocks identified',
+   tag:'NEW',source:'RCA Group D',
+   testType:'Functional — Date Tracking',phase:'QA + UAT',
+   precondition:'Patient with dated consent; date simulation available',
+   testData:'Expiring in 30 days\nExpiring in 60 days\nAlready expired\nLead time changed to 45 days',
+   steps:'1. 30-day expiration → Verify triggered\n2. 60-day → Verify no trigger\n3. Expired → Verify urgent alert\n4. Change lead to 45 → Verify configurable\n5. Verify correct blocks identified',
+   expected:'Step 1: Triggered\nStep 2: Not triggered\nStep 3: Urgent\nStep 4: Configurable',
+   passFail:'PASS: Tracked; triggers at lead time; configurable\nFAIL: Missed OR wrong lead',
+   notes:'30-day default per BRD',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-FUC-04-001',reqId:'FR-FUC-04',title:'Re-Consent by Change Type',flow:'Follow-Up Consent',priority:'P1',
+   description:'System shall identify which consent blocks require re-consent when service, payer, or community changes occur',
+   systemAction:'Change triggers mapped to blocks; only affected blocks re-triggered',
+   acceptance:'Correct blocks for re-consent; unnecessary blocks preserved',
+   tag:'NEW',source:'Framework / Registry',
+   testType:'Functional — Change Detection',phase:'QA + UAT',
+   precondition:'Patient with active consent; ability to simulate changes',
+   testData:'Service change: wellness → therapy\nPayer change: Medicare → private\nCommunity transfer\nNo change',
+   steps:'1. Change service → Specific blocks flagged\n2. CORE unaffected preserved\n3. Change payer → CONDITIONAL flagged\n4. Verify payer blocks correct\n5. Community transfer → TOGGLEs updated\n6. No change → No false trigger',
+   expected:'Steps 1–2: Service blocks correct\nSteps 3–4: Payer blocks correct\nStep 5: TOGGLEs updated\nStep 6: No false trigger',
+   passFail:'PASS: Only affected blocks re-triggered\nFAIL: Full re-consent OR wrong blocks',
+   notes:'Reduces Consent Specialist workload',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-FUC-05-001',reqId:'FR-FUC-05',title:'Outreach Structured Logging',flow:'Follow-Up Consent',priority:'P0',
+   description:'System shall log all outreach attempts with timestamp, channel, outcome, and next action',
+   systemAction:'Every attempt logged with structured data; no verbal-only',
+   acceptance:'Complete history with timestamp, channel, outcome, next action',
+   tag:'NEW',source:'CR-09 / RCA Group F',
+   testType:'Functional — Data Capture',phase:'QA + UAT',
+   precondition:'Patient with pending consent; Consent Specialist logged in',
+   testData:'Phone: no answer\nEmail: delivered, no response\nIn-person: unavailable\nSuccessful: consent obtained',
+   steps:'1. Log phone attempt → Timestamp captured\n2. Channel = Phone\n3. Outcome = No Answer\n4. Next action set\n5. Log email attempt\n6. Log in-person\n7. Verify complete history\n8. Verify feeds escalation',
+   expected:'Steps 1–4: Phone fully logged\nStep 5: Email logged\nStep 6: In-person logged\nStep 7: Complete history',
+   passFail:'PASS: All attempts logged; history maintained\nFAIL: Any field missing',
+   notes:'Addresses measurement void (RCA Group F)',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+
+  // DENIALS & APPEALS (3)
+  {id:'TC-DNA-01-001',reqId:'FR-DNA-01',title:'Denial Root Cause Categorization',flow:'Denials & Appeals',priority:'P1',
+   description:'System shall categorize denials by root cause type: consent-related, authorization, clinical documentation, other',
+   systemAction:'[SYNTHETIC] Category at entry; taxonomy enforced',
+   acceptance:'[SYNTHETIC] 100% categorized; no uncategorized',
+   tag:'TEMPLATE',source:'TBD',
+   testType:'Functional — Classification',phase:'UAT',
+   precondition:'[SYNTHETIC] Denial entry form; taxonomy configured',
+   testData:'[SYNTHETIC] Consent-related: missing sig\n[SYNTHETIC] Authorization: expired auth\n[SYNTHETIC] Clinical: incomplete notes',
+   steps:'1. Enter denial → Category required\n2. Select consent-related → Sub-categories\n3. Select authorization → Sub-categories\n4. Select clinical → Sub-categories\n5. Try blank → Blocked\n6. Verify reports',
+   expected:'Step 1: Mandatory\nSteps 2–4: Sub-categories available\nStep 5: Blocked\nStep 6: Reports work',
+   passFail:'PASS: All categorized; taxonomy enforced\nFAIL: Uncategorized saved',
+   notes:'[SYNTHETIC — REFINE WHEN PROCESS MAP EXTRACTED]',
+   dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-DNA-02-001',reqId:'FR-DNA-02',title:'Appeal Deadline Alerts',flow:'Denials & Appeals',priority:'P1',
+   description:'System shall track appeal deadlines per payer and generate alerts at configurable lead times',
+   systemAction:'[SYNTHETIC] Deadline per payer; configurable alerts',
+   acceptance:'[SYNTHETIC] Deadlines tracked; alerts generated',
+   tag:'TEMPLATE',source:'TBD',
+   testType:'Functional — Alerting',phase:'UAT',
+   precondition:'[SYNTHETIC] Appeal entered; alert system configured',
+   testData:'[SYNTHETIC] Medicare: 120-day, 14-day alert\n[SYNTHETIC] Commercial: 60-day, 7-day alert',
+   steps:'1. Medicare appeal → 120-day tracking\n2. Approach 14-day lead → Alert\n3. Commercial → 60-day tracking\n4. Approach 7-day lead → Alert\n5. Expired → Verify urgent\n6. Verify actionable',
+   expected:'Steps 1–2: Medicare tracked/alerted\nSteps 3–4: Commercial tracked/alerted\nSteps 5–6: Urgent and actionable',
+   passFail:'PASS: Tracked per payer; alerts at lead times\nFAIL: Missed deadline',
+   notes:'[SYNTHETIC — REFINE WHEN PROCESS MAP EXTRACTED]',
+   dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-DNA-03-001',reqId:'FR-DNA-03',title:'Denial-to-Defect Feedback',flow:'Denials & Appeals',priority:'P2',
+   description:'System shall provide feedback loop from denial root cause to originating consent/intake defect',
+   systemAction:'[SYNTHETIC] Denial traced to origin; defect flagged',
+   acceptance:'[SYNTHETIC] Traceability established; correction initiated',
+   tag:'TEMPLATE',source:'RCA Group F',
+   testType:'Functional — Traceability',phase:'UAT',
+   precondition:'[SYNTHETIC] Categorized denial; source record accessible',
+   testData:'[SYNTHETIC] Consent denial → missing HIPAA block\n[SYNTHETIC] Auth denial → intake data error',
+   steps:'1. Consent denial → Navigate to source\n2. Verify block identified\n3. Defect flag on source step\n4. Feedback visible to CD\n5. Verify patterns reportable',
+   expected:'Step 1: Traceable\nSteps 2–3: Specific defect flagged\nSteps 4–5: Visible and reportable',
+   passFail:'PASS: Full traceability; feedback visible\nFAIL: No traceability',
+   notes:'[SYNTHETIC] P2 — post-launch enhancement',
+   dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+
+  // CROSS-CUTTING (5)
+  {id:'TC-XCT-01-001',reqId:'FR-XCT-01',title:'Structured Handoff Enforcement',flow:'Cross-Cutting',priority:'P0',
+   description:'All process handoffs shall include structured data transfer (no verbal-only) with sender confirmation and receiver acknowledgement',
+   systemAction:'Structured data at every handoff; sender confirms; receiver acknowledges',
+   acceptance:'Handoff includes structured data; receiver acknowledgement logged',
+   tag:'NEW',source:'CR-05 / RCA Group C',
+   testType:'Functional — Workflow Integrity',phase:'QA + UAT',
+   precondition:'Two-role handoff scenario (Admissions → Consent Specialist)',
+   testData:'Admissions → Consent Specialist handoff\nAttempted verbal-only handoff',
+   steps:'1. Admissions completes → Initiates handoff\n2. Verify structured data attached\n3. Verify sender confirmed\n4. Verify receiver acknowledged\n5. Test end-to-end handoff chain\n6. Attempt verbal-only → Blocked',
+   expected:'Steps 1–5: Structured handoff works\nStep 6: Blocked without data',
+   passFail:'PASS: Structured required; verbal-only blocked\nFAIL: Verbal-only possible',
+   notes:'Addresses handoff fragmentation (RCA Group C)',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-XCT-02-001',reqId:'FR-XCT-02',title:'Single Patient Record Integrity',flow:'Cross-Cutting',priority:'P0',
+   description:'System shall maintain single patient record across all workflows with no duplicate entry',
+   systemAction:'One record; all workflows reference same; no duplicates',
+   acceptance:'Single record across all workflows; no duplicate data entry',
+   tag:'ENHANCED',source:'RCA Group A',
+   testType:'Functional — Data Architecture',phase:'QA + UAT',
+   precondition:'Patient created at intake; workflows in progress',
+   testData:'Patient with intake, consent, and follow-up activity\nAttempted duplicate creation',
+   steps:'1. Create patient at intake\n2. Progress to consent → Verify same record\n3. Progress to follow-up → Verify same record\n4. Attempt duplicate → Blocked/flagged\n5. Update in one → Verify reflected everywhere',
+   expected:'Steps 1–3: Same record\nStep 4: Duplicate blocked\nStep 5: Single source of truth',
+   passFail:'PASS: One record; no duplicates\nFAIL: Duplicate created OR data siloed',
+   notes:'Foundation for data integrity',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-XCT-03-001',reqId:'FR-XCT-03',title:'Registry as Single Source of Truth',flow:'Cross-Cutting',priority:'P0',
+   description:'Community Registry shall be the single source of truth for all community-specific workflow variations',
+   systemAction:'Registry drives all community-specific behavior; no hard-coded exceptions',
+   acceptance:'All community variations controlled by registry; no workarounds',
+   tag:'NEW',source:'CR-10',
+   testType:'Functional — Governance',phase:'QA + UAT',
+   precondition:'Registry populated; multiple communities configured',
+   testData:'Registry-controlled TOGGLE behavior\nRegistry change reflected in workflow\nAttempted hard-coded exception',
+   steps:'1. Verify community workflow matches registry\n2. Change registry setting → Verify workflow updates\n3. Verify no hard-coded exceptions\n4. New community → Auto-configuration\n5. Full traceability',
+   expected:'Steps 1–2: Registry drives workflow\nStep 3: No hard-coding\nStep 4: Auto-configuration',
+   passFail:'PASS: Registry controls all; changes reflected\nFAIL: Hard-coded exceptions',
+   notes:'Eliminates uncontrolled variation (RCA Group D)',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-XCT-04-001',reqId:'FR-XCT-04',title:'Exception Agreement Documentation',flow:'Cross-Cutting',priority:'P1',
+   description:'All exception agreements between B-Dev/B-Ops and communities shall be documented in Community Registry with approval trail',
+   systemAction:'Exceptions in registry with approval trail; no informal agreements',
+   acceptance:'All exceptions documented with approval; no undocumented exceptions',
+   tag:'NEW',source:'RCA Group D',
+   testType:'Functional — Governance',phase:'QA + UAT',
+   precondition:'Registry accessible; exception workflow defined',
+   testData:'New exception agreement\nException with approval trail\nAttempted undocumented exception',
+   steps:'1. Enter exception in registry\n2. Verify approval trail (who, when, why)\n3. Verify reflected in workflow\n4. Attempt undocumented → Blocked\n5. Verify audit trail accessible',
+   expected:'Steps 1–3: Documented and reflected\nStep 4: Undocumented blocked\nStep 5: Audit trail',
+   passFail:'PASS: All exceptions documented; undocumented blocked\nFAIL: Undocumented possible',
+   notes:'Stops workaround accumulation cycle',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-XCT-05-001',reqId:'FR-XCT-05',title:'CD vs CC Role Separation',flow:'Cross-Cutting',priority:'P1',
+   description:'System shall distinguish Clinical Director and Clinical Coordinator functions with separate role assignments',
+   systemAction:'CD and CC as separate roles; distinct permissions and workflows',
+   acceptance:'Clinical Director and Clinical Coordinator have separate role assignments',
+   tag:'NEW',source:'D1 / Open Q #1',
+   testType:'Functional — Role Architecture',phase:'QA + UAT',
+   precondition:'Both Clinical Director and Clinical Coordinator roles configured',
+   testData:'User assigned Clinical Director role\nUser assigned Clinical Coordinator role',
+   steps:'1. Assign Clinical Director → Verify permissions\n2. Assign Clinical Coordinator → Verify different permissions\n3. Verify distinct workflows\n4. Verify distinct task queues\n5. Verify no confusion',
+   expected:'Steps 1–2: Distinct permissions\nSteps 3–4: Distinct workflows\nStep 5: No confusion',
+   passFail:'PASS: Separate roles with distinct permissions\nFAIL: Roles conflated',
+   notes:'Open Item #8: CD disambiguation (Owner: Teresa/Julia)',
+   dataStatus:'Defined',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+
+  // NON-FUNCTIONAL (14)
+  {id:'TC-NFR-PER-01-001',reqId:'NFR-PER-01',title:'Consent Assembly ≤ 5 Seconds',flow:'Non-Functional',priority:'P1',
+   description:'Consent package assembly shall complete within 5 seconds for standard workflows',
+   systemAction:'[SYNTHETIC] Assembly ≤ 5 Seconds',acceptance:'[SYNTHETIC] Threshold met',
+   tag:'TEMPLATE',source:'Design',testType:'Non-Functional — Performance',phase:'QA',
+   precondition:'[SYNTHETIC] Standard load; performance monitoring enabled',
+   testData:'[SYNTHETIC] Standard load conditions',
+   steps:'1. Trigger assembly\n2. Measure time\n3. Repeat 10x\n4. Verify all < 5 sec',
+   expected:'All assemblies < 5 seconds',
+   passFail:'PASS: Within threshold\nFAIL: Exceeds threshold',
+   notes:'[SYNTHETIC threshold]',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-PER-02-001',reqId:'NFR-PER-02',title:'Email Delivery ≤ 2 Minutes',flow:'Non-Functional',priority:'P1',
+   description:'Email Open Forms delivery shall initiate within 2 minutes of assembly',
+   systemAction:'[SYNTHETIC] Email ≤ 2 Minutes',acceptance:'[SYNTHETIC] Threshold met',
+   tag:'TEMPLATE',source:'Design',testType:'Non-Functional — Performance',phase:'QA',
+   precondition:'[SYNTHETIC] Standard load; monitoring enabled',
+   testData:'[SYNTHETIC] Standard load',
+   steps:'1. Trigger consent with Email\n2. Record assembly timestamp\n3. Record email timestamp\n4. Verify < 2 min',
+   expected:'All deliveries < 2 minutes',
+   passFail:'PASS: Within threshold\nFAIL: Exceeds threshold',
+   notes:'[SYNTHETIC threshold]',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-PER-03-001',reqId:'NFR-PER-03',title:'50 Concurrent Workflows',flow:'Non-Functional',priority:'P2',
+   description:'System shall support 50 concurrent consent workflows per community',
+   systemAction:'[SYNTHETIC] 50 Concurrent',acceptance:'[SYNTHETIC] Threshold met',
+   tag:'TEMPLATE',source:'Design',testType:'Non-Functional — Performance',phase:'QA',
+   precondition:'[SYNTHETIC] Load test environment',testData:'[SYNTHETIC] 50 concurrent sessions',
+   steps:'1. Simulate 50 concurrent\n2. Verify no errors\n3. Verify no degradation\n4. Test 75 (125%)',
+   expected:'50: no errors\n75: graceful handling',
+   passFail:'PASS: Threshold met\nFAIL: Errors under load',
+   notes:'[SYNTHETIC threshold]',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-SEC-01-001',reqId:'NFR-SEC-01',title:'Encryption at Rest and in Transit',flow:'Non-Functional',priority:'P0',
+   description:'All consent data encrypted at rest (AES-256) and in transit (TLS 1.2+)',
+   systemAction:'[SYNTHETIC] Encryption verified',acceptance:'[SYNTHETIC] Compliance verified',
+   tag:'TEMPLATE',source:'HIPAA / Regulatory',testType:'Non-Functional — Security',phase:'QA + UAT',
+   precondition:'[SYNTHETIC] Security tools available',testData:'[SYNTHETIC] Security test environment',
+   steps:'1. Verify AES-256 at rest\n2. Verify TLS 1.2+ in transit\n3. Attempt unencrypted → Blocked\n4. Certificate check',
+   expected:'AES-256 confirmed\nTLS 1.2+ confirmed\nUnencrypted blocked',
+   passFail:'PASS: All compliance met\nFAIL: Any gap',
+   notes:'HIPAA requirement',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-SEC-02-001',reqId:'NFR-SEC-02',title:'Complete Audit Trail',flow:'Non-Functional',priority:'P0',
+   description:'System shall maintain complete audit trail for all consent document access, modifications, and signature events',
+   systemAction:'[SYNTHETIC] Complete Audit Trail',acceptance:'[SYNTHETIC] Compliance verified',
+   tag:'TEMPLATE',source:'HIPAA / Regulatory',testType:'Non-Functional — Security',phase:'QA + UAT',
+   precondition:'[SYNTHETIC] Audit system configured',testData:'[SYNTHETIC] Compliance checklist',
+   steps:'1. Access document → Verify logged\n2. Modify data → Verify logged\n3. Capture signature → Verify logged\n4. Verify tamper-proof',
+   expected:'All events logged\nWho/what/when captured\nTamper-proof',
+   passFail:'PASS: All compliance met\nFAIL: Any gap',
+   notes:'HIPAA requirement',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-SEC-03-001',reqId:'NFR-SEC-03',title:'ESIGN Act Compliance',flow:'Non-Functional',priority:'P0',
+   description:'Electronic signatures shall comply with ESIGN Act and state-specific requirements',
+   systemAction:'[SYNTHETIC] ESIGN Compliance',acceptance:'[SYNTHETIC] Compliance verified',
+   tag:'TEMPLATE',source:'HIPAA / Regulatory',testType:'Non-Functional — Security',phase:'QA + UAT',
+   precondition:'[SYNTHETIC] Legal review complete',testData:'[SYNTHETIC] Compliance checklist',
+   steps:'1. Verify ESIGN Act met\n2. Verify consent to electronic\n3. Verify signature record\n4. Verify identity verification',
+   expected:'ESIGN confirmed\nState requirements met',
+   passFail:'PASS: All compliance met\nFAIL: Any gap',
+   notes:'Legal review required',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-SEC-04-001',reqId:'NFR-SEC-04',title:'Role-Based PHI Access',flow:'Non-Functional',priority:'P0',
+   description:'PHI access shall be role-based with minimum necessary principle enforced',
+   systemAction:'[SYNTHETIC] Role-Based PHI Access',acceptance:'[SYNTHETIC] Compliance verified',
+   tag:'TEMPLATE',source:'HIPAA / Regulatory',testType:'Non-Functional — Security',phase:'QA + UAT',
+   precondition:'[SYNTHETIC] Roles configured',testData:'[SYNTHETIC] Role test accounts',
+   steps:'1. Admissions → Intake PHI only\n2. Consent Specialist → Consent PHI\n3. RCM → Billing PHI\n4. Cross-role → Blocked\n5. Minimum necessary enforced',
+   expected:'Each role: appropriate PHI only\nCross-role: blocked',
+   passFail:'PASS: All compliance met\nFAIL: Any gap',
+   notes:'HIPAA minimum necessary',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-SEC-05-001',reqId:'NFR-SEC-05',title:'Document Retention (7+ Years)',flow:'Non-Functional',priority:'P0',
+   description:'System shall support consent document retention per state and federal requirements (minimum 7 years)',
+   systemAction:'[SYNTHETIC] 7+ Year Retention',acceptance:'[SYNTHETIC] Compliance verified',
+   tag:'TEMPLATE',source:'HIPAA / Regulatory',testType:'Non-Functional — Security',phase:'QA + UAT',
+   precondition:'[SYNTHETIC] Retention policy configured',testData:'[SYNTHETIC] Compliance checklist',
+   steps:'1. Verify 7+ year retention\n2. Verify deletion blocked during retention\n3. Verify all artifacts covered\n4. Verify backup/DR',
+   expected:'7+ year configured\nDeletion blocked\nAll artifacts covered',
+   passFail:'PASS: All compliance met\nFAIL: Any gap',
+   notes:'Federal minimum 7 years',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-USA-01-001',reqId:'NFR-USA-01',title:'Consent Status in 2 Clicks',flow:'Non-Functional',priority:'P1',
+   description:'Consent Specialist shall determine consent status for any patient within 2 clicks/taps from dashboard',
+   systemAction:'[SYNTHETIC] 2-Click Access',acceptance:'[SYNTHETIC] Usability target met',
+   tag:'TEMPLATE',source:'Design / Process Map',testType:'Non-Functional — Usability',phase:'UAT',
+   precondition:'[SYNTHETIC] Test users configured',testData:'[SYNTHETIC] Role-appropriate accounts',
+   steps:'1. Log in as Consent Specialist\n2. Navigate to patient status\n3. Count clicks required\n4. Verify ≤ 2 clicks',
+   expected:'Status visible within 2 clicks',
+   passFail:'PASS: Usability target met\nFAIL: Target not met',
+   notes:'User experience critical',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-USA-02-001',reqId:'NFR-USA-02',title:'Clear Block-Level Visual Status',flow:'Non-Functional',priority:'P1',
+   description:'System shall provide clear visual status for each consent block (pending/complete/expired/escalated)',
+   systemAction:'[SYNTHETIC] Visual Status Indicators',acceptance:'[SYNTHETIC] Usability target met',
+   tag:'TEMPLATE',source:'Design / Process Map',testType:'Non-Functional — Usability',phase:'UAT',
+   precondition:'[SYNTHETIC] Test users configured',testData:'[SYNTHETIC] Multi-status consent',
+   steps:'1. View all statuses\n2. Verify pending = Blue\n3. Verify complete = Green\n4. Verify expired/escalated distinct\n5. Accessibility check',
+   expected:'All 4 statuses visually distinct',
+   passFail:'PASS: Usability target met\nFAIL: Target not met',
+   notes:'Connects to FR-CON-04',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-USA-03-001',reqId:'NFR-USA-03',title:'DVP Self-Service Registry Edit',flow:'Non-Functional',priority:'P2',
+   description:'Community Registry shall be editable by authorized DVPs without IT support',
+   systemAction:'[SYNTHETIC] DVP Self-Service',acceptance:'[SYNTHETIC] Usability target met',
+   tag:'TEMPLATE',source:'Design / Process Map',testType:'Non-Functional — Usability',phase:'UAT',
+   precondition:'[SYNTHETIC] DVP role configured',testData:'[SYNTHETIC] DVP test accounts',
+   steps:'1. Log in as DVP\n2. Navigate to Registry\n3. Edit TOGGLE state → Save\n4. Verify reflected in workflow\n5. No IT dependency',
+   expected:'DVP can edit\nChanges reflected\nNo IT dependency',
+   passFail:'PASS: Usability target met\nFAIL: Target not met',
+   notes:'P2 priority. Self-service reduces bottleneck.',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-INT-01-001',reqId:'NFR-INT-01',title:'Alinea Integration',flow:'Non-Functional',priority:'P0',
+   description:'System shall integrate with Alinea for patient demographics, consent storage, and Forms Badge status',
+   systemAction:'[SYNTHETIC] Alinea Integration',acceptance:'[SYNTHETIC] Integration verified',
+   tag:'TEMPLATE',source:'Architecture / Vendor',testType:'Non-Functional — Integration',phase:'QA + UAT',
+   precondition:'[SYNTHETIC] Integration environment; both systems accessible',testData:'[SYNTHETIC] Test data sets',
+   steps:'1. Create in Alinea → Verify in Crosby\n2. Update in Crosby → Verify in Alinea\n3. Complete consent → Badge Green\n4. Verify under load',
+   expected:'Bidirectional sync\nBadge accurate\nLoad handling clean',
+   passFail:'PASS: Integration functional; data accurate\nFAIL: Sync failure OR data loss',
+   notes:'Critical integration — Alinea is system of record',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-INT-02-001',reqId:'NFR-INT-02',title:'NetHealth Integration',flow:'Non-Functional',priority:'P1',
+   description:'System shall integrate with NetHealth for authorization status and treatment documentation',
+   systemAction:'[SYNTHETIC] NetHealth Integration',acceptance:'[SYNTHETIC] Integration verified',
+   tag:'TEMPLATE',source:'Architecture / Vendor',testType:'Non-Functional — Integration',phase:'QA + UAT',
+   precondition:'[SYNTHETIC] Both systems accessible',testData:'[SYNTHETIC] Test data sets',
+   steps:'1. Auth in NetHealth → Verify in consent\n2. Treatment documented → Verify accessible\n3. Denial trigger → Verify\n4. Mapping check',
+   expected:'Auth synced\nDocs accessible\nDenial works\nMapping accurate',
+   passFail:'PASS: Integration functional\nFAIL: Sync failure',
+   notes:'P1 priority',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]},
+  {id:'TC-NFR-INT-03-001',reqId:'NFR-INT-03',title:'Crosby Platform Integration',flow:'Non-Functional',priority:'P0',
+   description:'System shall support data exchange with Crosby consent platform via documented API or integration layer',
+   systemAction:'[SYNTHETIC] Crosby Integration',acceptance:'[SYNTHETIC] Integration verified',
+   tag:'TEMPLATE',source:'Architecture / Vendor',testType:'Non-Functional — Integration',phase:'QA + UAT',
+   precondition:'[SYNTHETIC] Integration environment',testData:'[SYNTHETIC] API documentation',
+   steps:'1. Verify API documented\n2. Send to Crosby → Verify received\n3. Receive from Crosby → Verify\n4. Error handling\n5. Fallback procedures',
+   expected:'API documented\nBidirectional exchange\nError handling clean',
+   passFail:'PASS: Integration functional\nFAIL: Sync failure',
+   notes:'Crosby architecture review pending. Phillip Meyers (IT) owns integration.',dataStatus:'Synthetic',sme:'',status:'Not Started',result:'',dateTested:'',defects:[]}
+];
+
+// ============================================================
+// GLOBAL STATE
+// ============================================================
+let currentView = 'dashboard';
+let currentFlow = null;
+let currentRole = 'tester';
+let defectCounter = 0;
+let allDefects = [];
+
+const FLOWS = ['Intake','360 Intake','New Consent','Follow-Up Consent','Denials & Appeals','Cross-Cutting','Non-Functional'];
+const FLOW_ICONS = {'Intake':'📥','360 Intake':'🔄','New Consent':'📋','Follow-Up Consent':'🔁','Denials & Appeals':'⚖️','Cross-Cutting':'🔗','Non-Functional':'⚙️'};
+const STATUSES = ['Not Started','In Progress','Pass','Fail','Blocked','Retest','Pending Approval','Closed'];
+const SEVERITIES = ['Critical','High','Medium','Low'];
+const SMES = ['Elyse S.','Katy','Teresa','Julia','Cassie','Heather','Lauren W.','Unassigned'];
+
+// ============================================================
+// METRICS
+// ============================================================
+function getMetrics() {
+  const total = TEST_CASES.length;
+  const passed = TEST_CASES.filter(t=>t.status==='Pass').length;
+  const failed = TEST_CASES.filter(t=>t.status==='Fail').length;
+  const blocked = TEST_CASES.filter(t=>t.status==='Blocked').length;
+  const pendingApproval = TEST_CASES.filter(t=>t.status==='Pending Approval').length;
+  const openDefects = allDefects.filter(d=>d.status!=='Closed').length;
+  const closedDefects = allDefects.filter(d=>d.status==='Closed');
+  let avgRes = 0;
+  if(closedDefects.length > 0) {
+    const totalDays = closedDefects.reduce((s,d)=> s + (d.resolutionDays||2), 0);
+    avgRes = (totalDays / closedDefects.length).toFixed(1);
+  }
+  return {total, passed, failed: failed + openDefects, blocked, pendingApproval, avgRes: avgRes||'—'};
+}
+
+function renderMetrics() {
+  const m = getMetrics();
+  document.getElementById('heroMetrics').innerHTML = `
+    <div class="metric-card" style="--c:#00838F"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:#00838F"></div>
+      <div class="metric-label">Total Test Cases</div><div class="metric-value">${m.total}</div><div class="metric-sub">47 requirements traced</div></div>
+    <div class="metric-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent-green)"></div>
+      <div class="metric-label">Passed</div><div class="metric-value" style="color:var(--accent-green)">${m.passed}</div><div class="metric-sub">${m.total?((m.passed/m.total)*100).toFixed(0):0}% complete</div></div>
+    <div class="metric-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent-red)"></div>
+      <div class="metric-label">Failed / Open Defects</div><div class="metric-value" style="color:var(--accent-red)">${m.failed}</div><div class="metric-sub">${allDefects.filter(d=>d.status!=='Closed').length} defects open</div></div>
+    <div class="metric-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent-amber)"></div>
+      <div class="metric-label">Blocked</div><div class="metric-value" style="color:var(--accent-amber)">${m.blocked}</div><div class="metric-sub">dependency / environment</div></div>
+    <div class="metric-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent-purple)"></div>
+      <div class="metric-label">Pending Lead Approval</div><div class="metric-value" style="color:var(--accent-purple)">${m.pendingApproval}</div><div class="metric-sub">awaiting Elyse / Katy</div></div>
+    <div class="metric-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent-teal)"></div>
+      <div class="metric-label">Avg Resolution Time</div><div class="metric-value" style="color:var(--accent-teal)">${m.avgRes}</div><div class="metric-sub">${m.avgRes==='—'?'no data yet':'days to close'}</div></div>
+  `;
+}
+
+// ============================================================
+// SIDEBAR
+// ============================================================
+function renderSidebar() {
+  const openByFlow = {};
+  FLOWS.forEach(f => { openByFlow[f] = TEST_CASES.filter(t=>t.flow===f && (t.status==='Fail'||t.status==='Blocked')).length; });
+  const openDefects = allDefects.filter(d=>d.status!=='Closed').length;
+  const pendingApproval = TEST_CASES.filter(t=>t.status==='Pending Approval').length;
+  const retestCount = TEST_CASES.filter(t=>t.status==='Retest').length;
+
+  let html = `<div class="sidebar-label">Views</div>`;
+  const views = [
+    {id:'dashboard',icon:'📊',label:'Dashboard Overview'},
+    {id:'defects',icon:'🐛',label:'Open Defects Worklist',badge:openDefects,badgeClass:'red'},
+    {id:'assignments',icon:'👤',label:'My Assignments'},
+    {id:'retest',icon:'🔄',label:'Retest Queue',badge:retestCount,badgeClass:'teal'},
+    {id:'approval',icon:'✅',label:'Pending Approval',badge:pendingApproval,badgeClass:'purple'},
+  ];
+  views.forEach(v => {
+    const active = currentView===v.id && !currentFlow ? 'active' : '';
+    const badge = v.badge ? `<span class="nav-badge ${v.badgeClass}">${v.badge}</span>` : '';
+    html += `<div class="nav-item ${active}" onclick="setView('${v.id}')""><span class="nav-icon">${v.icon}</span>${v.label}${badge}</div>`;
+  });
+
+  html += `<div class="sidebar-label" style="margin-top:16px">Process Flows</div>`;
+  FLOWS.forEach(f => {
+    const active = currentFlow===f ? 'active' : '';
+    const count = openByFlow[f];
+    const badge = count > 0 ? `<span class="nav-badge red">${count}</span>` : '';
+    html += `<div class="nav-item ${active}" onclick="setFlow('${f}')"><span class="nav-icon">${FLOW_ICONS[f]}</span>${f}${badge}</div>`;
+  });
+
+  document.getElementById('sidebar').innerHTML = html;
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function setView(view) {
+  currentView = view; currentFlow = null;
+  renderSidebar(); renderContent();
+}
+function setFlow(flow) {
+  currentFlow = flow; currentView = 'flow';
+  renderSidebar(); renderContent();
+}
+function switchRole() {
+  currentRole = document.getElementById('roleSelect').value;
+  renderContent();
+}
+
+// ============================================================
+// CONTENT RENDERING
+// ============================================================
+function renderContent() {
+  const el = document.getElementById('mainContent');
+  if(currentFlow) return renderFlowView(el, currentFlow);
+  switch(currentView) {
+    case 'dashboard': return renderDashboard(el);
+    case 'defects': return renderDefectsView(el);
+    case 'assignments': return renderAssignmentsView(el);
+    case 'retest': return renderRetestView(el);
+    case 'approval': return renderApprovalView(el);
+    default: return renderDashboard(el);
+  }
+}
+
+function renderDashboard(el) {
+  const flowCards = FLOWS.map(f => {
+    const cases = TEST_CASES.filter(t=>t.flow===f);
+    const passed = cases.filter(t=>t.status==='Pass').length;
+    const failed = cases.filter(t=>t.status==='Fail').length;
+    const blocked = cases.filter(t=>t.status==='Blocked').length;
+    const notStarted = cases.filter(t=>t.status==='Not Started').length;
+    const pct = cases.length ? ((passed/cases.length)*100).toFixed(0) : 0;
+    const barW = cases.length ? (passed/cases.length*100) : 0;
+    const barF = cases.length ? (failed/cases.length*100) : 0;
+    const barB = cases.length ? (blocked/cases.length*100) : 0;
+    return `<div class="approval-card" onclick="setFlow('${f}')" style="cursor:pointer">
+      <div class="approval-card-header">
+        <div class="approval-card-title">${FLOW_ICONS[f]} ${f}</div>
+        <span class="approval-card-meta">${cases.length} cases</span>
+      </div>
+      <div style="display:flex;gap:14px;margin-bottom:8px">
+        <div style="font-size:10px;color:var(--text-muted);font-family:'Consolas',monospace"><strong style="display:block;font-size:16px;color:var(--accent-green)">${passed}</strong>Passed</div>
+        <div style="font-size:10px;color:var(--text-muted);font-family:'Consolas',monospace"><strong style="display:block;font-size:16px;color:var(--accent-red)">${failed}</strong>Failed</div>
+        <div style="font-size:10px;color:var(--text-muted);font-family:'Consolas',monospace"><strong style="display:block;font-size:16px;color:var(--accent-amber)">${blocked}</strong>Blocked</div>
+        <div style="font-size:10px;color:var(--text-muted);font-family:'Consolas',monospace"><strong style="display:block;font-size:16px;color:var(--text-muted)">${notStarted}</strong>Pending</div>
+      </div>
+      <div style="height:4px;background:rgba(255,255,255,0.05);border-radius:2px;display:flex;overflow:hidden">
+        <div style="width:${barW}%;background:var(--accent-green);transition:width 0.5s"></div>
+        <div style="width:${barF}%;background:var(--accent-red);transition:width 0.5s"></div>
+        <div style="width:${barB}%;background:var(--accent-amber);transition:width 0.5s"></div>
+      </div>
+      <div style="text-align:right;font-size:10px;color:var(--text-muted);margin-top:4px;font-family:'Consolas',monospace">${pct}% passed</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="content-header">
+      <div class="content-title">Dashboard Overview</div>
+      <div class="content-meta">EmpowerMe Wellness UAT — 47 Requirements &middot; Go/No-Go: May 30, 2026 &middot; UAT Phase: May 5–23, 2026</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px">
+      ${flowCards}
+    </div>`;
+}
+
+function getFilteredCases(flowFilter) {
+  let cases = flowFilter ? TEST_CASES.filter(t=>t.flow===flowFilter) : [...TEST_CASES];
+  const search = document.getElementById('globalSearch').value.toLowerCase();
+  if(search.length >= 2) {
+    cases = cases.filter(t => t.id.toLowerCase().includes(search) || t.title.toLowerCase().includes(search) || t.reqId.toLowerCase().includes(search) || t.flow.toLowerCase().includes(search));
+  }
+  return cases;
+}
+
+function renderTestTable(cases, title, subtitle) {
+  if(cases.length === 0) return `<div class="empty-state"><div class="icon">📭</div><div class="msg">No test cases match the current filters</div></div>`;
+
+  const isReadOnly = currentRole === 'stakeholder';
+  const rows = cases.map(tc => {
+    const statusClass = tc.status.toLowerCase().replace(/\s+/g,'-');
+    return `<tr onclick="openTestDetail('${tc.id}')">
+      <td style="font-family:'Consolas',monospace;font-size:10px;color:var(--accent-teal);white-space:nowrap">${tc.id}</td>
+      <td style="font-family:'Consolas',monospace;font-size:10px;white-space:nowrap">${tc.reqId}</td>
+      <td style="color:var(--text-primary);font-weight:500">${tc.title}</td>
+      <td><span class="priority-badge ${tc.priority}">${tc.priority}</span></td>
+      <td style="font-size:10px">${tc.sme||'—'}</td>
+      <td><span class="status-badge ${statusClass}">${tc.status}</span></td>
+      <td style="font-size:10px">${tc.dateTested||'—'}</td>
+      ${!isReadOnly ? `<td onclick="event.stopPropagation()">
+        <select class="filter-select" style="padding:3px 6px;font-size:10px;width:100px" onchange="updateStatus('${tc.id}',this.value)">
+          ${STATUSES.map(s=>`<option value="${s}" ${tc.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>` : ''}
+    </tr>`;
+  }).join('');
+
+  return `
+    <div class="content-header">
+      <div class="content-title">${title}</div>
+      <div class="content-meta">${subtitle}</div>
+    </div>
+    <div class="filters">
+      <select class="filter-select" id="filterStatus" onchange="applyFilters()">
+        <option value="">All Statuses</option>
+        ${STATUSES.map(s=>`<option value="${s}">${s}</option>`).join('')}
+      </select>
+      <select class="filter-select" id="filterPriority" onchange="applyFilters()">
+        <option value="">All Priorities</option>
+        <option value="P0">P0</option><option value="P1">P1</option><option value="P2">P2</option>
+      </select>
+      <select class="filter-select" id="filterSme" onchange="applyFilters()">
+        <option value="">All SMEs</option>
+        ${SMES.map(s=>`<option value="${s}">${s}</option>`).join('')}
+      </select>
+    </div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead><tr>
+          <th>Test Case</th><th>Req ID</th><th>Title</th><th>Pri</th><th>SME</th><th>Status</th><th>Tested</th>
+          ${!isReadOnly ? '<th>Action</th>' : ''}
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function renderFlowView(el, flow) {
+  const cases = getFilteredCases(flow);
+  el.innerHTML = renderTestTable(cases, `${FLOW_ICONS[flow]} ${flow}`, `${cases.length} test cases in this process flow`);
+  applyTableFilters();
+}
+
+function renderDefectsView(el) {
+  const open = allDefects.filter(d=>d.status!=='Closed');
+  if(open.length === 0) {
+    el.innerHTML = `<div class="content-header"><div class="content-title">🐛 Open Defects Worklist</div></div>
+      <div class="empty-state"><div class="icon">✅</div><div class="msg">No open defects — all clear!</div></div>`;
+    return;
+  }
+  const rows = open.map(d => `<tr onclick="openDefectDetail('${d.id}')">
+    <td style="font-family:'Consolas',monospace;font-size:10px;color:var(--accent-orange)">${d.id}</td>
+    <td style="color:var(--text-primary)">${d.description.substring(0,50)}...</td>
+    <td><span class="severity-badge ${d.severity}">${d.severity}</span></td>
+    <td style="font-size:10px">${d.assignedTo}</td>
+    <td><span class="status-badge ${d.status.toLowerCase().replace(/\s+/g,'-')}">${d.status}</span></td>
+    <td style="font-size:10px">${d.testCaseId}</td>
+  </tr>`).join('');
+
+  el.innerHTML = `<div class="content-header"><div class="content-title">🐛 Open Defects Worklist</div><div class="content-meta">${open.length} open defects requiring resolution</div></div>
+    <div class="table-container"><table class="data-table">
+      <thead><tr><th>Defect ID</th><th>Description</th><th>Severity</th><th>Assigned To</th><th>Status</th><th>Test Case</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+}
+
+function renderAssignmentsView(el) {
+  const cases = TEST_CASES.filter(t=>t.sme && t.status !== 'Pass' && t.status !== 'Closed');
+  el.innerHTML = renderTestTable(cases.length ? cases : TEST_CASES.filter(t=>t.status!=='Pass'), '👤 My Assignments', 'Test cases assigned and pending completion');
+}
+
+function renderRetestView(el) {
+  const cases = TEST_CASES.filter(t=>t.status==='Retest');
+  if(cases.length === 0) {
+    el.innerHTML = `<div class="content-header"><div class="content-title">🔄 Retest Queue</div></div>
+      <div class="empty-state"><div class="icon">✅</div><div class="msg">No items in retest queue</div></div>`;
+    return;
+  }
+  el.innerHTML = renderTestTable(cases, '🔄 Retest Queue', `${cases.length} test cases awaiting retest after defect fix`);
+}
+
+function renderApprovalView(el) {
+  const pending = TEST_CASES.filter(t=>t.status==='Pending Approval');
+  const isLead = currentRole === 'lead';
+
+  if(pending.length === 0) {
+    el.innerHTML = `<div class="content-header"><div class="content-title">✅ Pending Lead Approval</div></div>
+      <div class="empty-state"><div class="icon">📭</div><div class="msg">No items awaiting approval</div></div>`;
+    return;
+  }
+
+  const cards = pending.map(tc => {
+    const defects = allDefects.filter(d=>d.testCaseId===tc.id);
+    return `<div class="approval-card">
+      <div class="approval-card-header">
+        <div class="approval-card-title">${tc.id} — ${tc.title}</div>
+        <span class="status-badge pending-approval">Pending Approval</span>
+      </div>
+      <div class="approval-card-body">
+        <strong>Flow:</strong> ${tc.flow} &middot; <strong>Priority:</strong> ${tc.priority} &middot; <strong>Defects:</strong> ${defects.length}
+        ${defects.map(d=>`<div style="margin-top:4px;padding:4px 8px;background:rgba(0,0,0,0.2);border-radius:4px;font-size:10px">
+          <span class="severity-badge ${d.severity}" style="margin-right:4px">${d.severity}</span> ${d.description.substring(0,60)}... — ${d.status}
+        </div>`).join('')}
+      </div>
+      ${isLead ? `<div class="action-row">
+        <button class="btn btn-success btn-sm" onclick="approveTestCase('${tc.id}')">✓ Approve</button>
+        <button class="btn btn-danger btn-sm" onclick="rejectTestCase('${tc.id}')">✗ Reject</button>
+      </div>` : '<div style="font-size:10px;color:var(--text-muted);font-style:italic">Switch to Test Lead role to approve/reject</div>'}
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `<div class="content-header">
+    <div class="content-title">✅ Pending Lead Approval</div>
+    <div class="content-meta">${pending.length} items awaiting Elyse / Katy sign-off</div>
+  </div>${cards}`;
+}
+
+// ============================================================
+// FILTERS
+// ============================================================
+function applyFilters() {
+  renderContent();
+  applyTableFilters();
+}
+
+function applyTableFilters() {
+  const statusEl = document.getElementById('filterStatus');
+  const prioEl = document.getElementById('filterPriority');
+  const smeEl = document.getElementById('filterSme');
+  if(!statusEl) return;
+  const statusFilter = statusEl.value;
+  const prioFilter = prioEl.value;
+  const smeFilter = smeEl.value;
+  const rows = document.querySelectorAll('.data-table tbody tr');
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    if(cells.length < 6) return;
+    const status = cells[5]?.textContent.trim();
+    const prio = cells[3]?.textContent.trim();
+    const sme = cells[4]?.textContent.trim();
+    let show = true;
+    if(statusFilter && status !== statusFilter) show = false;
+    if(prioFilter && prio !== prioFilter) show = false;
+    if(smeFilter && sme !== smeFilter) show = false;
+    row.style.display = show ? '' : 'none';
+  });
+}
+
+// ============================================================
+// STATUS UPDATE + DEFECT AUTO-GENERATION
+// ============================================================
+function updateStatus(tcId, newStatus) {
+  const tc = TEST_CASES.find(t=>t.id===tcId);
+  if(!tc) return;
+  const oldStatus = tc.status;
+  tc.status = newStatus;
+  tc.dateTested = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  if(newStatus === 'Fail' && oldStatus !== 'Fail') {
+    showDefectModal(tcId);
+  }
+  renderMetrics(); renderSidebar(); renderContent();
+  showToast(`${tcId} → ${newStatus}`);
+}
+
+function showDefectModal(tcId) {
+  const tc = TEST_CASES.find(t=>t.id===tcId);
+  document.getElementById('modalContent').innerHTML = `
+    <h3 style="color:var(--accent-red)">🐛 Log Defect — ${tcId}</h3>
+    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:12px">${tc.title}</div>
+    <label>Severity</label>
+    <select id="defSeverity">${SEVERITIES.map(s=>`<option>${s}</option>`).join('')}</select>
+    <label>Description</label>
+    <textarea id="defDesc" placeholder="Describe the defect found during testing..."></textarea>
+    <label>Assigned To</label>
+    <select id="defAssigned">
+      <option>Crosby Engineering</option>
+      ${SMES.map(s=>`<option>${s}</option>`).join('')}
+    </select>
+    <div class="action-row" style="margin-top:14px">
+      <button class="btn btn-danger" onclick="createDefect('${tcId}')">Log Defect</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function createDefect(tcId) {
+  defectCounter++;
+  const defect = {
+    id: `DEF-${String(defectCounter).padStart(3,'0')}`,
+    testCaseId: tcId,
+    severity: document.getElementById('defSeverity').value,
+    description: document.getElementById('defDesc').value || 'Defect identified during UAT execution',
+    assignedTo: document.getElementById('defAssigned').value,
+    status: 'Open',
+    createdDate: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    resolutionNotes: '',
+    retestResult: '',
+    approver: '',
+    approvalDate: '',
+    rejectionReason: '',
+    resolutionDays: 0
+  };
+  allDefects.push(defect);
+  const tc = TEST_CASES.find(t=>t.id===tcId);
+  if(tc) tc.defects.push(defect.id);
+  closeModal();
+  renderMetrics(); renderSidebar();
+  showToast(`Defect ${defect.id} logged for ${tcId}`);
+}
+
+// ============================================================
+// APPROVAL WORKFLOW
+// ============================================================
+function approveTestCase(tcId) {
+  const tc = TEST_CASES.find(t=>t.id===tcId);
+  if(!tc) return;
+  tc.status = 'Closed';
+  tc.defects.forEach(dId => {
+    const d = allDefects.find(x=>x.id===dId);
+    if(d) { d.status = 'Closed'; d.approver = 'Test Lead'; d.approvalDate = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); d.resolutionDays = Math.floor(Math.random()*3)+1; }
+  });
+  renderMetrics(); renderSidebar(); renderContent();
+  showToast(`${tcId} APPROVED and closed`);
+}
+
+function rejectTestCase(tcId) {
+  document.getElementById('modalContent').innerHTML = `
+    <h3 style="color:var(--accent-orange)">✗ Reject — ${tcId}</h3>
+    <label>Rejection Reason (required)</label>
+    <textarea id="rejReason" placeholder="Why is this being sent back?"></textarea>
+    <div class="action-row" style="margin-top:14px">
+      <button class="btn btn-danger" onclick="confirmReject('${tcId}')">Reject & Reassign</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function confirmReject(tcId) {
+  const reason = document.getElementById('rejReason').value;
+  if(!reason) { alert('Rejection reason is required'); return; }
+  const tc = TEST_CASES.find(t=>t.id===tcId);
+  if(!tc) return;
+  tc.status = 'Fail';
+  tc.defects.forEach(dId => {
+    const d = allDefects.find(x=>x.id===dId);
+    if(d) { d.status = 'Assigned'; d.rejectionReason = reason; }
+  });
+  closeModal();
+  renderMetrics(); renderSidebar(); renderContent();
+  showToast(`${tcId} REJECTED — sent back to Assigned`);
+}
+
+// ============================================================
+// DETAIL PANEL
+// ============================================================
+function openTestDetail(tcId) {
+  const tc = TEST_CASES.find(t=>t.id===tcId);
+  if(!tc) return;
+  const defects = allDefects.filter(d=>d.testCaseId===tcId);
+  const isReadOnly = currentRole === 'stakeholder';
+
+  let defectHtml = '';
+  if(defects.length > 0) {
+    defectHtml = `<div class="detail-section">
+      <div class="detail-section-title">Defect History (${defects.length})</div>
+      ${defects.map(d => `<div class="detail-card" style="border-left-color:${d.severity==='Critical'?'var(--accent-red)':d.severity==='High'?'var(--accent-orange)':'var(--accent-amber)'}">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="color:var(--accent-orange);font-family:'Consolas',monospace;font-weight:700">${d.id}</span>
+          <span class="severity-badge ${d.severity}">${d.severity}</span>
+        </div>
+        <div>${d.description}</div>
+        <div style="margin-top:4px;font-size:10px;color:var(--text-muted)">Assigned: ${d.assignedTo} &middot; Status: ${d.status} &middot; ${d.createdDate}</div>
+        ${d.rejectionReason ? `<div style="margin-top:4px;padding:4px 8px;background:rgba(232,115,90,0.1);border-radius:4px;font-size:10px;color:var(--accent-orange)"><strong>Rejection:</strong> ${d.rejectionReason}</div>` : ''}
+        ${d.resolutionNotes ? `<div style="margin-top:4px;font-size:10px"><strong>Resolution:</strong> ${d.resolutionNotes}</div>` : ''}
+        ${!isReadOnly && d.status!=='Closed' ? `<div class="action-row">
+          <select class="filter-select" style="padding:3px;font-size:10px" onchange="updateDefectStatus('${d.id}',this.value)">
+            <option value="Open" ${d.status==='Open'?'selected':''}>Open</option>
+            <option value="Assigned" ${d.status==='Assigned'?'selected':''}>Assigned</option>
+            <option value="In Progress" ${d.status==='In Progress'?'selected':''}>In Progress</option>
+            <option value="Fixed" ${d.status==='Fixed'?'selected':''}>Fixed</option>
+          </select>
+        </div>` : ''}
+      </div>`).join('')}
+    </div>`;
+  }
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-title">${tc.title}</div>
+    <div class="detail-subtitle">${tc.id} &middot; ${tc.reqId} &middot; ${tc.flow}</div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Requirement (from BRD)</div>
+      <div class="detail-field"><strong>Description</strong>${tc.description}</div>
+      <div class="detail-field"><strong>System Action</strong>${tc.systemAction}</div>
+      <div class="detail-field"><strong>Acceptance Criteria</strong>${tc.acceptance}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <span class="priority-badge ${tc.priority}">${tc.priority}</span>
+        <span class="status-badge ${tc.tag==='NEW'?'pass':tc.tag==='ENHANCED'?'in-progress':tc.tag==='PENDING'?'blocked':'not-started'}">${tc.tag}</span>
+        <span style="font-size:9px;color:var(--text-muted);font-family:'Consolas',monospace">SRC: ${tc.source}</span>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Test Steps & Expected Results</div>
+      <div class="detail-field"><strong>Type / Phase</strong>${tc.testType} &middot; ${tc.phase}</div>
+      <div class="detail-field"><strong>Precondition</strong>${tc.precondition}</div>
+      <div class="detail-field"><strong>Test Data</strong><pre style="white-space:pre-wrap;font-size:10px;background:rgba(0,0,0,0.2);padding:6px 8px;border-radius:4px;margin-top:2px;color:var(--text-secondary)">${tc.testData}</pre></div>
+      <div class="detail-field"><strong>Steps</strong><pre style="white-space:pre-wrap;font-size:10px;background:rgba(0,0,0,0.2);padding:6px 8px;border-radius:4px;margin-top:2px;color:var(--text-secondary)">${tc.steps}</pre></div>
+      <div class="detail-field"><strong>Expected Results</strong><pre style="white-space:pre-wrap;font-size:10px;background:rgba(0,0,0,0.2);padding:6px 8px;border-radius:4px;margin-top:2px;color:var(--text-secondary)">${tc.expected}</pre></div>
+      <div class="detail-field"><strong>Pass/Fail Criteria</strong><pre style="white-space:pre-wrap;font-size:10px;background:rgba(0,0,0,0.2);padding:6px 8px;border-radius:4px;margin-top:2px;color:var(--text-secondary)">${tc.passFail}</pre></div>
+    </div>
+
+    ${defectHtml}
+
+    <div class="detail-section">
+      <div class="detail-section-title">Execution Status</div>
+      <div class="detail-field"><strong>Status</strong><span class="status-badge ${tc.status.toLowerCase().replace(/\s+/g,'-')}">${tc.status}</span></div>
+      <div class="detail-field"><strong>Tested By</strong>${tc.sme || 'Unassigned'}</div>
+      <div class="detail-field"><strong>Date Tested</strong>${tc.dateTested || 'Not yet tested'}</div>
+      <div class="detail-field"><strong>Notes</strong>${tc.notes}</div>
+      <div class="detail-field"><strong>Data Status</strong><span style="color:${tc.dataStatus==='Defined'?'var(--accent-green)':tc.dataStatus==='Pending'?'var(--accent-amber)':'var(--accent-orange)'}">${tc.dataStatus}</span></div>
+    </div>
+
+    ${!isReadOnly ? `<div class="action-row">
+      <select class="filter-select" id="detailSme" onchange="assignSme('${tc.id}',this.value)" style="min-width:120px">
+        <option value="">Assign SME...</option>
+        ${SMES.map(s=>`<option value="${s}" ${tc.sme===s?'selected':''}>${s}</option>`).join('')}
+      </select>
+      <select class="filter-select" id="detailStatus" onchange="updateStatus('${tc.id}',this.value);openTestDetail('${tc.id}')" style="min-width:120px">
+        ${STATUSES.map(s=>`<option value="${s}" ${tc.status===s?'selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>` : ''}`;
+
+  document.getElementById('detailPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('visible');
+}
+
+function openDefectDetail(defId) {
+  const d = allDefects.find(x=>x.id===defId);
+  if(!d) return;
+  openTestDetail(d.testCaseId);
+}
+
+function assignSme(tcId, sme) {
+  const tc = TEST_CASES.find(t=>t.id===tcId);
+  if(tc) { tc.sme = sme; showToast(`${tcId} assigned to ${sme}`); }
+}
+
+function updateDefectStatus(defId, newStatus) {
+  const d = allDefects.find(x=>x.id===defId);
+  if(!d) return;
+  d.status = newStatus;
+  if(newStatus === 'Fixed') {
+    const tc = TEST_CASES.find(t=>t.id===d.testCaseId);
+    if(tc) tc.status = 'Retest';
+  }
+  renderMetrics(); renderSidebar();
+  showToast(`${defId} → ${newStatus}`);
+  // Refresh detail
+  openTestDetail(d.testCaseId);
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('visible');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderMetrics();
+renderSidebar();
+renderContent();
+</script>
+</body>
+</html>
